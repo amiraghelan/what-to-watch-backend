@@ -8,18 +8,25 @@ app = express();
 
 app.use(bodyParser.json());
 
+// fetches the currently playing movies from tbdb
 app.get("/now_playing", (req, res) => {
   console.log(req.body.page);
-  tmdb.nowPlaying((movies, page, totalPages) => {
-    res.json({
-      movies: movies,
-      page: page,
-      totalPages,
-      totalPages,
+  tmdb
+    .nowPlaying()
+    .then((movies, page, totalPages) => {
+      res.json({
+        movies: movies,
+        page: page,
+        totalPages,
+        totalPages,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  }, req.body.page);
 });
 
+// return the total likes number of the movie and checks if the user has liked the movie
 app.get("/movies_likes", (req, res) => {
   const { user_id: user_id, movie_id: movie_id } = req.body;
 
@@ -33,9 +40,8 @@ app.get("/movies_likes", (req, res) => {
     })
     .then(
       points.movieTotalLikes(movie_id).then(([rows]) => {
-        rows.forEach((element) => {
-          totalLikes += element.point;
-        });
+        totalLikes = rows[0]["SUM(point)"]
+        totalLikes = totalLikes ? totalLikes : 0
         res.json({
           userLikeValue: userLikeValue,
           totalLikes: totalLikes,
@@ -44,6 +50,7 @@ app.get("/movies_likes", (req, res) => {
     );
 });
 
+// give a movie a point(like or dislike) from the user
 app.post("/point", (req, res) => {
   const { user_id: user_id, movie_id: movie_id, point: point } = req.body;
 
@@ -61,4 +68,3 @@ app.post("/point", (req, res) => {
 });
 
 app.listen(3000);
-

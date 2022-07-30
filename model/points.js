@@ -8,7 +8,7 @@ module.exports.checkUserLike = (user_id, movie_id) => {
 };
 
 module.exports.movieTotalLikes = (movie_id) => {
-  return db.execute("SELECT point FROM likes WHERE movie_id=?", [movie_id]);
+  return db.execute("SELECT SUM(point) FROM likes WHERE movie_id=?", [movie_id]);
 };
 
 module.exports.updatePoint = (user_id, movie_id, point) => {
