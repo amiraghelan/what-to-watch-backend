@@ -18,20 +18,23 @@ module.exports.nowPlaying = (page = 1) => {
       })
       .then((res) => {
         movieRaw = res.data.results;
-        totalPages = res.data.total_pages;
-        page = res.data.page;
+        let totalPages = res.data.total_pages;
+        let page = res.data.page;
         const movies = [];
-
         movieRaw.forEach(({ id, title, poster_path, release_date }) => {
           movie = {
             id: id,
             title: title,
             posterPath: poster_path,
-            releasDate: release_date,
+            releaseDate: release_date,
           };
           movies.push(movie);
         });
-        resolve(movies, page, totalPages);
+        console.log(page,totalPages)
+        resolve({
+          movies:movies,
+          page: page,
+          totalPages: totalPages});
       })
       .catch((err) => {
         reject(err)
